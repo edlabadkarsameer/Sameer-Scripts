@@ -1,0 +1,67 @@
+variables:
+  SAST_EXCLUDED_ANALYZERS: "security-code-scan,flawfinder,brakeman-sast,nodejs-scan-sast,phpcs-security-audit-sast,pmd-apex-sast,sobelow-sast,spotbugs-sast"
+  GIT_STRATEGY: "clone"
+  backupPath:  "D:\\tmp\\backup-for-dotnet"
+  deploymentPath: "D:\\tmp\\deployment-for-dotnet"
+  SLN_FILE: "ItalyPMAWebNMTS_v3_Reg.sln"
+  folderPath: "$CI_PROJECT_DIR"
+
+Backup:
+  stage: backup  
+  tags:
+  - window-personal
+  script:
+    - |
+      if (-not (Test-Path $env:backupPath)) {
+        Write-Output "Creating backup folder..."
+        New-Item -ItemType Directory -Path $env:backupPath | Out-Null
+      }
+    - $dateStamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+    - $backupZip = Join-Path -Path $env:backupPath -ChildPath "Backup_$dateStamp.zip"
+    - |
+      Write-Output "Backup path is:"
+      Write-Output $env:backupPath  
+    - Write-Output "Backup zip file will be created at $backupZip"
+    - |
+      Write-Output "Deployment path is:"
+      Write-Output $env:deploymentPath
+    - |
+      $exclusions = @("*.log", "web.config", "xyz-igonre.txt")
+      $filesToZip = Get-ChildItem -Path $env:deploymentPath -Recurse | Where-Object { 
+        foreach ($exclude in $exclusions) { 
+          if ($_.Name -like $exclude) { return $false }
+        }
+        return $true
+      }
+      if (Test-Path $env:deploymentPath) {
+        Write-Output "-----------------------------------------------------------"  
+        Write-Output "Compressing contents from Deployment folder into zip file, ignoring $($exclusions -join ', ')..."
+        Write-Output "-----------------------------------------------------------"  
+        Compress-Archive -Path $filesToZip.FullName -DestinationPath $backupZip -Force
+        Write-Output "Contents compressed successfully into $backupZip."
+        Write-Output "-----------------------------------------------------------"  
+      } else {
+        Write-Output "-----------------------------------------------------------"  
+        Write-Output "Deployment $env:deploymentPath not found."
+        Write-Output "-----------------------------------------------------------"  
+      }
+    - |
+      # Remove older backups if there are more than 5
+      Write-Output "Checking for old backup zip files..."
+      $backupZips = Get-ChildItem -Path $env:backupPath -Filter "*.zip" | Sort-Object LastWriteTime -Descending
+      if ($backupZips.Count -gt 5) {
+        Write-Output "More than 5 backups found, deleting older ones..."
+        $filesToRemove = $backupZips | Select-Object -Skip 5
+        foreach ($file in $filesToRemove) {
+          Remove-Item -Path $file.FullName -Force
+          Write-Output "Deleted $($file.Name)"
+        }
+        Write-Output "Old backups deleted."
+      } else {
+        Write-Output "No old backups to delete."
+      }
+  # rules:
+  #   - if: $CI_COMMIT_TAG =~ /^SIT_.*/
+  #   - if: $CI_COMMIT_TAG =~ /^master_.*/
+  #   - if: '$CI_COMMIT_TAG =~ /^UAT_.*/'
+

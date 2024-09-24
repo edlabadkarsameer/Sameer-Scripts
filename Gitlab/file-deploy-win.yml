@@ -1,0 +1,65 @@
+variables:
+  SAST_EXCLUDED_ANALYZERS: "security-code-scan,flawfinder,brakeman-sast,nodejs-scan-sast,phpcs-security-audit-sast,pmd-apex-sast,sobelow-sast,spotbugs-sast"
+  GIT_STRATEGY: "clone"
+  backupPath:  "D:\\tmp\\backup-for-dotnet"
+  deploymentPath: "D:\\tmp\\deployment-for-dotnet"
+  SLN_FILE: "ItalyPMAWebNMTS_v3_Reg.sln"
+  folderPath: "$CI_PROJECT_DIR"
+
+Deploy:
+  stage: deploy
+  tags:
+  - window-personal
+  dependencies:
+    - "Backup"
+  before_script:
+    - Write-Output "-----------Checking files --------------------"
+    - $sourcePath = "$folderPath"
+    - |
+      function DeleteFilesAndFoldersRecursively {
+          param (
+              [string]$FolderPath
+          )
+          if (Test-Path $FolderPath -PathType Container) {
+              $items = Get-ChildItem $FolderPath
+              foreach ($item in $items) {
+                  if ($item.PSIsContainer) {
+                      foreach ($folderName in @("xyz-igonre", "web")) {
+                          if ($item.Name -eq $folderName) {
+                              Write-Output "Folder '$($item.FullName)' and its contents have been deleted."
+                              Remove-Item $item.FullName -Recurse -Force
+                              continue
+                          }
+                      }
+                      DeleteFilesAndFoldersRecursively -FolderPath $item.FullName
+                  }
+                  else {
+                      foreach ($fileName in @("web.config", ".gitlab-ci.yml")) {
+                          if ($item.Name -eq $fileName) {
+                              Write-Output "File '$($item.FullName)' has been deleted."
+                              Remove-Item $item.FullName
+                              break
+                          }
+                      }
+                  }
+              }
+          }
+          else {
+              Write-Output "==========================================="
+          }
+      }      
+    - DeleteFilesAndFoldersRecursively -FolderPath $sourcePath         
+  script:
+    - Write-Output "------------Deploying Files---------------"
+    - cd $CI_PROJECT_DIR
+    - ls
+    - |
+      Write-Output "-----------------------------------------------------------" 
+      Write-Output "depolyment path is:"
+      Write-Output $env:deploymentPath 
+      Write-Output "-----------------------------------------------------------"  
+    - Get-ChildItem -Path $sourcePath | Copy-Item -Destination $env:deploymentPath -Recurse -Force
+  # rules:
+  #   - if: $CI_COMMIT_TAG =~ /^SIT_.*/
+  #   - if: $CI_COMMIT_TAG =~ /^master_.*/
+  #   - if: '$CI_COMMIT_TAG =~ /^UAT_.*/'

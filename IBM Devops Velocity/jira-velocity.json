@@ -1,0 +1,258 @@
+{
+    "description": "Jira-integration-with-Velocity",
+    "query": "",
+    "phases": [
+      {
+        "name": "Planning",
+        "description": "",
+        "stages": [
+          {
+            "name": "Backlog",
+            "query": "(issue.status=\"Backlog\")",
+            "description": "",
+            "targets": [
+              "To Do"
+            ],
+            "wipLimit": 10,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "To Do",
+            "query": "(issue.status=\"To Do\")",
+            "description": "",
+            "targets": [
+              "Development"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Development",
+        "description": "",
+        "stages": [
+          {
+            "name": "Development",
+            "query": "(issue.status=\"Development\")",
+            "description": "",
+            "targets": [
+              "In Review"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "In Review",
+            "query": "(issue.status=\"Review\")",
+            "description": "",
+            "targets": [
+              "Dev"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Testing",
+        "description": "",
+        "stages": [
+          {
+            "name": "Dev",
+            "query": "(issue.status=\"DEV\")",
+            "description": "",
+            "targets": [
+              "QA"
+            ],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "QA",
+            "query": "(issue.status=\"QA\")",
+            "description": "",
+            "targets": [
+              "UAT"
+            ],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "UAT",
+            "query": "(issue.status=\"UAT\")",
+            "description": "",
+            "targets": [
+              "Production"
+            ],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Completed",
+        "description": "com",
+        "stages": [
+          {
+            "name": "Production",
+            "query": "(issue.status=\"Production\")",
+            "description": "",
+            "targets": [],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      }
+    ],
+    "leadTimeChange": {
+      "start": null,
+      "end": null
+    },
+    "leadTime": {
+      "start": "Backlog",
+      "end": "Production"
+    },
+    "cycleTime": {
+      "start": "Development",
+      "end": "Production"
+    },
+    "devCycleTime": {
+      "start": "Development",
+      "end": "In Review"
+    },
+    "mappings": {
+      "priority": {
+        "Lowest": [
+          "Lowest"
+        ],
+        "Low": [
+          "Low"
+        ],
+        "Medium": [
+          "Medium"
+        ],
+        "High": [
+          "High"
+        ],
+        "Highest": [
+          "Highest"
+        ]
+      }
+    },
+    "integrations": [
+      {
+        "_id": "669f9af91b70a3001cee0f74",
+        "type": "ucv-ext-jira",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "Jira-Gitlab",
+        "disabled": false,
+        "properties": {
+          "baseUrl": "http://192.168.31.11:8080/",
+          "jiraProjects": [
+            "VEL"
+          ],
+          "jiraJql": "",
+          "pat": "****",
+          "username": "sameer.edlabadkar",
+          "password": "****",
+          "consumer_key": "",
+          "consumer_secret": "****",
+          "access_token": "",
+          "access_token_secret": "****",
+          "requestTimeout": 30,
+          "proxyServer": "",
+          "proxyUsername": "",
+          "proxyPassword": "****",
+          "fieldMapping": ""
+        },
+        "image": "urbancode/ucv-ext-jira:2.3.17"
+      }
+    ],
+    "linkRules": [],
+    "metrics": null,
+    "metricsBar": [
+      {
+        "__typename": "Chartable",
+        "_id": "6697be8c05d374062f8cb895",
+        "name": "Distribution",
+        "drillDowns": null,
+        "layout": {
+          "barType": "percent"
+        },
+        "overlays": [],
+        "filters": {
+          "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+        }
+      },
+      {
+        "__typename": "Chartable",
+        "_id": "6697be8c05d374062f8cb85e",
+        "name": "Throughput",
+        "drillDowns": null,
+        "layout": {
+          "comparisonType": "percentageChange"
+        },
+        "overlays": [
+          {
+            "_id": "6697be8c05d374062f8cb85b",
+            "name": "Previous Throughput",
+            "layout": {
+              "comparisonType": "percentageChange"
+            },
+            "filters": {
+              "dql": "timestamp > 30d AND timestamp < 60d AND cycleType = \"leadTime\""
+            },
+            "__typename": "Chartable"
+          }
+        ],
+        "filters": {
+          "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+        }
+      },
+      {
+        "relativeTime": "DAY30",
+        "metricDefinitionId": "MTTR",
+        "name": "Time To Restore Service (MTTR)",
+        "displayType": "interval",
+        "calculationType": "average"
+      },
+      {
+        "relativeTime": "DAY30",
+        "metricDefinitionId": "PROD_DEPLOY_COUNT",
+        "name": "Deployment Frequency",
+        "displayType": "frequency",
+        "calculationType": "average"
+      },
+      {
+        "relativeTime": "DAY30",
+        "metricDefinitionId": "CFR",
+        "name": "Change Failure Rate (CFR)",
+        "displayType": "percent",
+        "calculationType": "average"
+      },
+      {
+        "relativeTime": "DAY7",
+        "metricDefinitionId": "PROD_DEPLOY_COUNT",
+        "name": "d freq",
+        "displayType": "frequency",
+        "calculationType": "average"
+      }
+    ]
+  }

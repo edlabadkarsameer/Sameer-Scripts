@@ -1,0 +1,55 @@
+variables:
+  SAST_EXCLUDED_ANALYZERS: "security-code-scan,flawfinder,brakeman-sast,nodejs-scan-sast,phpcs-security-audit-sast,pmd-apex-sast,sobelow-sast,spotbugs-sast"
+  GIT_STRATEGY: "clone"
+  backupPath:  "D:\\tmp\\backup-for-dotnet"
+  deploymentPath: "D:\\tmp\\deployment-for-dotnet"
+  SLN_FILE: "ItalyPMAWebNMTS_v3_Reg.sln"
+  folderPath: "$CI_PROJECT_DIR"
+
+
+Rollback:
+  stage: rollback
+  tags:
+  - window-personal
+  dependencies:
+    - "Deploy"
+  script:
+    - |
+      # Define the paths for backup and deployment
+      Write-Output "Backup path is:"
+      Write-Output $env:backupPath
+      Write-Output "Deployment path is:"
+      Write-Output $env:deploymentPath
+    - |
+      # Find the latest backup ZIP file
+      $latestBackupZip = Get-ChildItem -Path $env:backupPath -Filter "*.zip" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+      if ($latestBackupZip) {
+        Write-Output "Latest backup found: $($latestBackupZip.FullName)"
+      } else {
+        Write-Output "No backup found to roll back."
+        exit 1  # Exit the script if no backup is found
+      }
+    - |
+      # Ensure the deployment path exists
+      if (-not (Test-Path $env:deploymentPath)) {
+        Write-Output "Deployment path not found, creating it..."
+        New-Item -ItemType Directory -Path $env:deploymentPath | Out-Null
+      }
+    - |
+      # Define the files to be excluded from deletion (e.g., web.config, xyz-igonre.txt)
+      $excludeFiles = @("web.config", "xyz-ignore.txt")
+      Write-Output "Excluding files: $($excludeFiles -join ', ') from deletion."
+    - |
+      # Clear the current contents of the deployment folder except the excluded files
+      Write-Output "Clearing current deployment contents, but keeping exclusions..."
+      Get-ChildItem -Path $env:deploymentPath -Recurse | Where-Object {
+        $excludeFiles -notcontains $_.Name
+      } | Remove-Item -Recurse -Force
+      Write-Output "Current deployment folder cleared except for excluded files."
+    - |
+      # Unzip the latest backup into the deployment folder
+      Write-Output "Restoring backup from $($latestBackupZip.FullName) to $env:deploymentPath..."
+      Expand-Archive -Path $latestBackupZip.FullName -DestinationPath $env:deploymentPath -Force
+      Write-Output "Rollback completed. Backup restored to deployment folder."
+  when: manual
+

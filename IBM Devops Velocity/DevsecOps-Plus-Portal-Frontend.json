@@ -1,0 +1,307 @@
+{
+  "description": "Value stream management of DevSecOps-Plus Portal Frontend",
+  "query": "",
+  "phases": [
+    {
+      "name": "Planning",
+      "description": "",
+      "stages": [
+        {
+          "name": "To Do",
+          "query": "(issue.status=\"To Do\")",
+          "description": "",
+          "targets": [
+            "Analyze Requirement"
+          ],
+          "wipLimit": 10,
+          "showAlerts": true,
+          "showSpeed": true,
+          "gates": null
+        },
+        {
+          "name": "Analyze Requirement",
+          "query": "(issue.status=\"analyze\")",
+          "description": "",
+          "targets": [
+            "Selected-For-Development"
+          ],
+          "wipLimit": 10,
+          "showAlerts": true,
+          "showSpeed": true,
+          "gates": null
+        },
+        {
+          "name": "Prodtion Incident",
+          "query": "(issue.status=\"Production Incident\")",
+          "description": "",
+          "targets": [
+            "Selected-For-Development"
+          ],
+          "wipLimit": 10,
+          "showAlerts": true,
+          "showSpeed": true,
+          "gates": null
+        }
+      ]
+    },
+    {
+      "name": "Development",
+      "description": "",
+      "stages": [
+        {
+          "name": "Selected-For-Development",
+          "query": "(issue.status=\"Selected-For-Development\")",
+          "description": "",
+          "targets": [
+            "In Review"
+          ],
+          "wipLimit": null,
+          "showAlerts": true,
+          "showSpeed": true,
+          "gates": null
+        },
+        {
+          "name": "In Review",
+          "query": "(issue.status=\"Review\")",
+          "description": "",
+          "targets": [
+            "DEV",
+            "Build"
+          ],
+          "wipLimit": null,
+          "showAlerts": true,
+          "showSpeed": true,
+          "gates": null
+        },
+        {
+          "name": "Build",
+          "query": "(build.status=\"success\")",
+          "description": "",
+          "targets": [
+            "DEV"
+          ],
+          "wipLimit": null,
+          "showAlerts": true,
+          "showSpeed": true,
+          "gates": null
+        }
+      ]
+    },
+    {
+      "name": "Testing Environment",
+      "description": "",
+      "stages": [
+        {
+          "name": "DEV",
+          "query": "(issue.status=\"DEV\" or deployment.env=DEV)",
+          "description": "",
+          "targets": [
+            "Quality Analysis"
+          ],
+          "wipLimit": null,
+          "showAlerts": false,
+          "showSpeed": false,
+          "gates": null
+        },
+        {
+          "name": "Quality Analysis",
+          "query": "(issue.status=\"QA\")",
+          "description": "",
+          "targets": [
+            "Production"
+          ],
+          "wipLimit": null,
+          "showAlerts": false,
+          "showSpeed": false,
+          "gates": null
+        }
+      ]
+    },
+    {
+      "name": "Completed",
+      "description": "",
+      "stages": [
+        {
+          "name": "Production",
+          "query": "(issue.status=\"Production\")",
+          "description": "",
+          "targets": [],
+          "wipLimit": null,
+          "showAlerts": false,
+          "showSpeed": false,
+          "gates": null
+        }
+      ]
+    }
+  ],
+  "leadTimeChange": {
+    "start": null,
+    "end": null
+  },
+  "leadTime": {
+    "start": "To Do",
+    "end": "Production"
+  },
+  "cycleTime": {
+    "start": "Selected-For-Development",
+    "end": "Production"
+  },
+  "devCycleTime": {
+    "start": "Selected-For-Development",
+    "end": "In Review"
+  },
+  "mappings": {
+    "priority": {
+      "Lowest": [
+        "Lowest"
+      ],
+      "Low": [
+        "Low"
+      ],
+      "Medium": [
+        "Medium"
+      ],
+      "High": [
+        "High"
+      ],
+      "Highest": [
+        "Highest"
+      ]
+    }
+  },
+  "integrations": [
+      {
+        "_id": "66b9f674e9d76d001109d3d6",
+      "type": "ucv-ext-jira",
+      "tenant_id": "5ade13625558f2c6688d15ce",
+      "name": "GVJ",
+      "disabled": false,
+      "properties": {
+        "baseUrl": "http://192.168.31.11:8080/",
+        "jiraProjects": [
+          "GVJ"
+        ],
+        "jiraJql": "",
+        "pat": "****",
+        "username": "sameer.edlabadkar",
+        "password": "****",
+        "consumer_key": "",
+        "consumer_secret": "****",
+        "access_token": "",
+        "access_token_secret": "****",
+        "requestTimeout": 30,
+        "proxyServer": "",
+        "proxyUsername": "",
+        "proxyPassword": "****",
+        "fieldMapping": ""
+      },
+      "image": "urbancode/ucv-ext-jira:2.3.17"
+    },
+    {
+      "_id": "66b1a3951b70a3001cf0bef7",
+      "type": "ucv-ext-gitlab",
+      "tenant_id": "5ade13625558f2c6688d15ce",
+      "name": "Gitlab-integration-with-velocity",
+      "disabled": false,
+      "properties": {
+        "baseUrl": "http://gitlab.datamato.com",
+        "private_token": "****",
+        "projectNames": [
+          "application-for-testing-the flow"
+        ],
+        "projectIds": [
+          "279"
+        ],
+        "branchName": "dev",
+        "otherBranches": [],
+        "fieldMapping": [],
+        "proxyServer": "",
+        "proxyUsername": "",
+        "proxyPassword": "****"
+      },
+      "image": "urbancode/ucv-ext-gitlab:2.2.68"
+    }
+  ],
+  "linkRules": [
+    {
+      "fromIntegrationName": "Gitlab-integration-with-velocity",
+      "toIntegrationName": "GVJ",
+      "fromField": "pr.name",
+      "toField": "issue.id",
+      "pattern": "([A-Z]+-[0-9]+)"
+    }
+  ],
+  "metrics": null,
+  "metricsBar": [
+    {
+      "__typename": "Chartable",
+      "_id": "6697be8c05d374062f8cb895",
+      "name": "Distribution",
+      "drillDowns": null,
+      "layout": {
+        "barType": "percent"
+      },
+      "overlays": [],
+      "filters": {
+        "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+      }
+    },
+    {
+      "__typename": "Chartable",
+      "_id": "6697be8c05d374062f8cb85e",
+      "name": "Throughput",
+      "drillDowns": null,
+      "layout": {
+        "comparisonType": "percentageChange"
+      },
+      "overlays": [
+        {
+          "_id": "6697be8c05d374062f8cb85b",
+          "name": "Previous Throughput",
+          "layout": {
+            "comparisonType": "percentageChange"
+          },
+          "filters": {
+            "dql": "timestamp > 30d AND timestamp < 60d AND cycleType = \"leadTime\""
+          },
+          "__typename": "Chartable"
+        }
+      ],
+      "filters": {
+        "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+      }
+    },
+    {
+      "relativeTime": "DAY30",
+      "metricDefinitionId": "DEPLOY_COUNT",
+      "name": "Deployment Counts",
+      "displayType": "frequency",
+      "calculationType": "average"
+    },
+    {
+      "__typename": "Chartable",
+      "_id": "6697be8c2b24cbfcb1c8dac9",
+      "name": "Bottleneck",
+      "drillDowns": null,
+      "layout": null,
+      "overlays": [],
+      "filters": {
+        "dql": "record.executionDate < 30d"
+      }
+    },
+    {
+      "relativeTime": "DAY30",
+      "metricDefinitionId": "CFR",
+      "name": "Change Failure Rate (CFR)",
+      "displayType": "percent",
+      "calculationType": "average"
+    },
+    {
+      "relativeTime": "DAY30",
+      "metricDefinitionId": "PROD_DEPLOY_COUNT",
+      "name": "Deployment Frequency",
+      "displayType": "frequency",
+      "calculationType": "average"
+    }
+  ]
+}

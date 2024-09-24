@@ -1,0 +1,166 @@
+// curl -u sameer.edlabadkar:Test@123 -X GET -H "Content-Type: application/json" http://192.168.31.11:8080/rest/api/2/issue/VEL-13/transitions
+{
+    "expand": "transitions",
+    "transitions": [
+        {
+            "id": "11",
+            "name": "To Do",
+            "description": "",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10100",
+                "description": "",
+                "iconUrl": "http://192.168.31.11:8080/",
+                "name": "To Do",
+                "id": "10100",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/2",
+                    "id": 2,
+                    "key": "new",
+                    "colorName": "default",
+                    "name": "To Do"
+                }
+            }
+        },
+        {
+            "id": "41",
+            "name": "Backlog",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10000",
+                "description": "",
+                "iconUrl": "http://192.168.31.11:8080/",
+                "name": "Backlog",
+                "id": "10000",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/2",
+                    "id": 2,
+                    "key": "new",
+                    "colorName": "default",
+                    "name": "To Do"
+                }
+            }
+        },
+        {
+            "id": "51",
+            "name": "Development",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/3",
+                "description": "This issue is being actively worked on at the moment by the assignee.",
+                "iconUrl": "http://192.168.31.11:8080/images/icons/statuses/inprogress.png",
+                "name": "Development",
+                "id": "3",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/4",
+                    "id": 4,
+                    "key": "indeterminate",
+                    "colorName": "inprogress",
+                    "name": "In Progress"
+                }
+            }
+        },
+        {
+            "id": "71",
+            "name": "DEV",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10101",
+                "description": "Development Environment",
+                "iconUrl": "http://192.168.31.11:8080/images/icons/statuses/generic.png",
+                "name": "DEV",
+                "id": "10101",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "success",
+                    "name": "Done"
+                }
+            }
+        },
+        {
+            "id": "81",
+            "name": "QA",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10103",
+                "description": "Quality Analysis Environment",
+                "iconUrl": "http://192.168.31.11:8080/images/icons/statuses/generic.png",
+                "name": "QA",
+                "id": "10103",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "success",
+                    "name": "Done"
+                }
+            }
+        },
+        {
+            "id": "91",
+            "name": "UAT",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10104",
+                "description": "",
+                "iconUrl": "http://192.168.31.11:8080/images/icons/statuses/generic.png",
+                "name": "UAT",
+                "id": "10104",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "success",
+                    "name": "Done"
+                }
+            }
+        },
+        {
+            "id": "101",
+            "name": "Production",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10105",
+                "description": "",
+                "iconUrl": "http://192.168.31.11:8080/images/icons/statuses/generic.png",
+                "name": "Production",
+                "id": "10105",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/3",
+                    "id": 3,
+                    "key": "done",
+                    "colorName": "success",
+                    "name": "Done"
+                }
+            }
+        },
+        {
+            "id": "111",
+            "name": "Review",
+            "description": "Managed by JIRA Software",
+            "opsbarSequence": 2147483647,
+            "to": {
+                "self": "http://192.168.31.11:8080/rest/api/2/status/10102",
+                "description": "Review",
+                "iconUrl": "http://192.168.31.11:8080/images/icons/statuses/generic.png",
+                "name": "Review",
+                "id": "10102",
+                "statusCategory": {
+                    "self": "http://192.168.31.11:8080/rest/api/2/statuscategory/4",
+                    "id": 4,
+                    "key": "indeterminate",
+                    "colorName": "inprogress",
+                    "name": "In Progress"
+                }
+            }
+        }
+    ]
+}

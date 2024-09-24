@@ -1,0 +1,257 @@
+{
+    "description": null,
+    "query": null,
+    "phases": [
+      {
+        "name": "Plan",
+        "description": null,
+        "stages": [
+          {
+            "name": "Backlog",
+            "query": "issue.status=\"Backlog\" or issue.status=\"To Do\"",
+            "description": "Needs to be prioritized",
+            "targets": [
+              "To Point",
+              "Selected For Development"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "Prod Incidents",
+            "query": "issue.status=\"Prod Incidents\"",
+            "description": "Production issues for remediation",
+            "targets": [
+              "Selected For Development"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "To Point",
+            "query": "issue.status=\"Needs Points\"",
+            "description": "Need more or better requirements",
+            "targets": [
+              "Selected For Development"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "Selected For Development",
+            "query": "issue.status=\"Selected for Development\"",
+            "description": "Ready for the developers to pick",
+            "targets": [
+              "In Progress"
+            ],
+            "wipLimit": 10,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Develop",
+        "description": null,
+        "stages": [
+          {
+            "name": "In Progress",
+            "query": "issue.status=\"In Progress\" and pr.status!=open",
+            "description": "Stories started",
+            "targets": [
+              "Review",
+              "Merged",
+              "DEV"
+            ],
+            "wipLimit": 5,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "Review",
+            "query": "pr.status=\"open\"",
+            "description": "Opened Pull Requests",
+            "targets": [
+              "Merged"
+            ],
+            "wipLimit": 5,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "Merged",
+            "query": "(pr.status=MERGED or pr.status=closed) AND build.status!=success AND deployment.env!=DEV and deployment.env!=PROD ",
+            "description": "Everything approved and merged into master",
+            "targets": [
+              "Build"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "Build",
+            "query": "build.status=success AND deployment.env!=DEV AND deployment.env!=PROD",
+            "description": "Building in Jenkins",
+            "targets": [
+              "DEV"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Deploy",
+        "description": null,
+        "stages": [
+          {
+            "name": "DEV",
+            "query": "(deployment.env=DEV and deployment.env!=QA and deployment.env!=PROD) or (issue.type=task and issue.status=DEV)",
+            "description": null,
+            "targets": [
+              "QA"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "QA",
+            "query": "(deployment.env=DEV and deployment.env=QA and deployment.env!=PROD) or (issue.type=task and issue.status=QA)",
+            "description": null,
+            "targets": [
+              "PROD"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Maintain",
+        "description": null,
+        "stages": [
+          {
+            "name": "PROD",
+            "query": "(deployment.env=DEV and deployment.env=QA and deployment.env=PROD) or (issue.type=epic and issue.status=done) or (issue.type=task and issue.status=done)",
+            "description": null,
+            "targets": [],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          }
+        ]
+      }
+    ],
+    "leadTimeChange": {
+      "start": null,
+      "end": null
+    },
+    "leadTime": {
+      "start": "Selected For Development",
+      "end": "PROD"
+    },
+    "cycleTime": {
+      "start": "In Progress",
+      "end": "PROD"
+    },
+    "devCycleTime": {
+      "start": null,
+      "end": null
+    },
+    "mappings": null,
+    "integrations": [
+      {
+        "_id": "66a372071b70a3001cee199f",
+        "type": "ucv-ext-bottleneck-detection",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "EMSF_Bottleneck",
+        "disabled": false,
+        "properties": {
+          "workflowId": ""
+        },
+        "image": "hclcr.io/accelerate/ucv-ext-bottleneck-detection:1.0.2"
+      },
+      {
+        "_id": "66a372071b70a3001cee19a0",
+        "type": "ucv-ext-handlebars-reporter",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "EMSF_Reports",
+        "disabled": false,
+        "properties": {},
+        "image": "hclcr.io/accelerate/ucv-ext-handlebars-reporter:2.0.1"
+      },
+      {
+        "_id": "66a373871b70a3001cee1a5b",
+        "type": "ucv-ext-jira",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "DEMO (EmeraldProductTeam-Inventory-wi-1721987975203)",
+        "disabled": false,
+        "properties": {
+          "baseUrl": "https://DEMO (EmeraldProductTeam-Inventory-wi-1721987975203)",
+          "username": "xxxxxxxxxxxxx",
+          "password": "****",
+          "consumer_key": "",
+          "consumer_secret": "****",
+          "access_token": "",
+          "access_token_secret": "****",
+          "jiraProjects": [
+            "xxxxxx"
+          ],
+          "proxyServer": "",
+          "proxyUsername": "",
+          "proxyPassword": "****"
+        },
+        "image": "hclcr.io/accelerate/ucv-ext-jira:1.0.39"
+      },
+      {
+        "_id": "66a373871b70a3001cee1a5c",
+        "type": "ucv-ext-github",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "DEMO (EmeraldProductTeam-Inventory-sc-1721987975203)",
+        "disabled": false,
+        "properties": {
+          "apiUrl": "https://xxxxxxxxxxxxx",
+          "owner": "xxxxxxxxxxxxxxx",
+          "token": "****",
+          "repositories": [
+            "test"
+          ],
+          "branch": "",
+          "otherBranches": "",
+          "proxyServer": "",
+          "proxyUsername": "",
+          "proxyPassword": "****"
+        },
+        "image": "urbancode/ucv-ext-github:1.4.17"
+      }
+    ],
+    "linkRules": [
+      {
+        "fromIntegrationName": "DEMO (EmeraldProductTeam-Inventory-sc-1721987975203)",
+        "toIntegrationName": "DEMO (EmeraldProductTeam-Inventory-wi-1721987975203)",
+        "fromField": "pr.name",
+        "toField": "issue.id",
+        "pattern": "([A-Z]+-[0-9]+)"
+      }
+    ],
+    "metrics": [],
+    "metricsBar": []
+  }

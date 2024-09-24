@@ -1,0 +1,242 @@
+{
+    "description": "",
+    "query": "",
+    "phases": [
+      {
+        "name": "Planning",
+        "description": "",
+        "stages": [
+          {
+            "name": "Backlog",
+            "query": "(issue.status=\"To Do\")",
+            "description": "",
+            "targets": [
+              "To Do"
+            ],
+            "wipLimit": 10,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "To Do",
+            "query": "(issue.status=\"To Do\")",
+            "description": "",
+            "targets": [
+              "In Progress"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "Prod Incident",
+            "query": "(issue.status=\"Prod Incident\")",
+            "description": "",
+            "targets": [
+              "In Progress"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Development",
+        "description": "",
+        "stages": [
+          {
+            "name": "In Progress",
+            "query": "(issue.status=\"selected-for-developement\")",
+            "description": "",
+            "targets": [
+              "In Review"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "In Review",
+            "query": "(pr.status=Active or pr.status=active or pr.status=open or pr.status=opened )",
+            "description": "",
+            "targets": [
+              "DEV",
+              "Build"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "Build",
+            "query": "(build.status=\"success\")",
+            "description": "",
+            "targets": [
+              "DEV"
+            ],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Testing Environment",
+        "description": "",
+        "stages": [
+          {
+            "name": "DEV",
+            "query": "(issue.status=\"DEV\" or deployment.env=DEV)",
+            "description": "",
+            "targets": [
+              "Quality Analysis"
+            ],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "Quality Analysis",
+            "query": "(issue.status=\"QA\" or deployment.env=QA)",
+            "description": "",
+            "targets": [
+              "Production"
+            ],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Completed",
+        "description": "",
+        "stages": [
+          {
+            "name": "Production",
+            "query": "(issue.status=\"Production\" or deployment.env=Production)",
+            "description": "",
+            "targets": [],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      }
+    ],
+    "leadTimeChange": {
+      "start": null,
+      "end": null
+    },
+    "leadTime": {
+      "start": "Backlog",
+      "end": "Production"
+    },
+    "cycleTime": {
+      "start": "In Progress",
+      "end": "Production"
+    },
+    "devCycleTime": {
+      "start": "In Progress",
+      "end": "In Review"
+    },
+    "mappings": {
+      "priority": {
+        "Lowest": [
+          "4"
+        ],
+        "Low": [
+          "3"
+        ],
+        "Medium": [
+          "2"
+        ],
+        "High": [
+          "1"
+        ],
+        "Highest": [
+          "1"
+        ]
+      }
+    },
+    "integrations": [
+    {
+      "_id": "66cd948db236c7001dff0db7",
+      "type": "ucv-ext-azure",
+      "tenant_id": "5ade13625558f2c6688d15ce",
+      "name": "azure-devops",
+      "disabled": false,
+      "properties": {
+        "baseUrl": "https://dev.azure.com",
+        "username": "sameer.edlabadkar@datamato.com",
+        "password": "****",
+        "accessToken": "****",
+        "organization": "devops-velocity-demo",
+        "project": "devops-velocity-demo-project",
+        "repositories": [
+          "devops-velocity-demo-project"
+        ],
+        "branchName": "dev",
+        "otherBranches": [],
+        "proxyServer": "",
+        "proxyUsername": "",
+        "proxyPassword": "****",
+        "apiLimits": "1000",
+        "tags": []
+      },
+      "image": "urbancode/ucv-ext-azure:4.0.43"
+    }
+  ],
+    "linkRules": [],
+    "metrics": null,
+    "metricsBar": [
+      {
+        "__typename": "Chartable",
+        "_id": "66c5884b6429836fdedbae1a",
+        "name": "Distribution",
+        "drillDowns": null,
+        "layout": {
+          "barType": "percent"
+        },
+        "overlays": [],
+        "filters": {
+          "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+        }
+      },
+      {
+        "__typename": "Chartable",
+        "_id": "66c5884b6429836fdedbade3",
+        "name": "Throughput",
+        "drillDowns": null,
+        "layout": {
+          "comparisonType": "percentageChange"
+        },
+        "overlays": [
+          {
+            "_id": "66c5884b6429836fdedbade0",
+            "name": "Previous Throughput",
+            "layout": {
+              "comparisonType": "percentageChange"
+            },
+            "filters": {
+              "dql": "timestamp > 30d AND timestamp < 60d AND cycleType = \"leadTime\""
+            },
+            "__typename": "Chartable"
+          }
+        ],
+        "filters": {
+          "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+        }
+      }
+    ]
+  }

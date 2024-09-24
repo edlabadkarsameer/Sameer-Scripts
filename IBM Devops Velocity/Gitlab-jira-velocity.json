@@ -1,0 +1,222 @@
+{
+    "description": "",
+    "query": "",
+    "phases": [
+      {
+        "name": "Planning",
+        "description": "",
+        "stages": [
+          {
+            "name": "Backlog",
+            "query": "(issue.status=\"Backlog\")",
+            "description": "",
+            "targets": [
+              "To Do"
+            ],
+            "wipLimit": 10,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          },
+          {
+            "name": "To Do",
+            "query": "(issue.status=\"To Do\")",
+            "description": "",
+            "targets": [
+              "In Progress"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Development",
+        "description": "",
+        "stages": [
+          {
+            "name": "In Progress",
+            "query": "(issue.status=\"Development\")",
+            "description": "",
+            "targets": [
+              "In Review"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          },
+          {
+            "name": "In Review",
+            "query": "(issue.status=\"Review\") AND (pr.status=\"opened\")",
+            "description": "",
+            "targets": [
+              "Completed"
+            ],
+            "wipLimit": null,
+            "showAlerts": true,
+            "showSpeed": true,
+            "gates": null
+          }
+        ]
+      },
+      {
+        "name": "Completed",
+        "description": "",
+        "stages": [
+          {
+            "name": "Completed",
+            "query": "(issue.status=\"DEV\") AND (pr.status=\"closed\")",
+            "description": "",
+            "targets": [],
+            "wipLimit": null,
+            "showAlerts": false,
+            "showSpeed": false,
+            "gates": null
+          }
+        ]
+      }
+    ],
+    "leadTimeChange": {
+      "start": null,
+      "end": null
+    },
+    "leadTime": {
+      "start": "Backlog",
+      "end": "Completed"
+    },
+    "cycleTime": {
+      "start": "In Progress",
+      "end": "Completed"
+    },
+    "devCycleTime": {
+      "start": "In Progress",
+      "end": "In Review"
+    },
+    "mappings": {
+      "priority": {
+        "Lowest": [
+          "Lowest"
+        ],
+        "Low": [
+          "Low"
+        ],
+        "Medium": [
+          "Medium"
+        ],
+        "High": [
+          "High"
+        ],
+        "Highest": [
+          "Highest"
+        ]
+      }
+    },
+    "integrations": [
+      {
+        "_id": "669f9af91b70a3001cee0f74",
+        "type": "ucv-ext-jira",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "Jira-Gitlab",
+        "disabled": false,
+        "properties": {
+          "baseUrl": "http://192.168.31.11:8080/",
+          "jiraProjects": [
+            "VEL"
+          ],
+          "jiraJql": "",
+          "pat": "****",
+          "username": "sameer.edlabadkar",
+          "password": "****",
+          "consumer_key": "",
+          "consumer_secret": "****",
+          "access_token": "",
+          "access_token_secret": "****",
+          "requestTimeout": 30,
+          "proxyServer": "",
+          "proxyUsername": "",
+          "proxyPassword": "****",
+          "fieldMapping": ""
+        },
+        "image": "urbancode/ucv-ext-jira:2.3.17"
+      },
+      {
+        "_id": "66a32ebc1b70a3001cee15be",
+        "type": "ucv-ext-gitlab",
+        "tenant_id": "5ade13625558f2c6688d15ce",
+        "name": "Gitlab-integration-with-velocity",
+        "disabled": false,
+        "properties": {
+          "baseUrl": "http://gitlab.datamato.com/",
+          "private_token": "****",
+          "projectNames": [
+            "application-frontend"
+          ],
+          "projectIds": [
+            "262"
+          ],
+          "branchName": "dev",
+          "otherBranches": [],
+          "fieldMapping": [],
+          "proxyServer": "",
+          "proxyUsername": "",
+          "proxyPassword": "****"
+        },
+        "image": "urbancode/ucv-ext-gitlab:2.2.68"
+      }
+    ],
+    "linkRules": [
+      {
+        "fromIntegrationName": "Gitlab-integration-with-velocity",
+        "toIntegrationName": "Jira-Gitlab",
+        "fromField": "pr.name",
+        "toField": "issue.id",
+        "pattern": "([A-Z]+-[0-9]+)"
+      }
+    ],
+    "metrics": null,
+    "metricsBar": [
+      {
+        "__typename": "Chartable",
+        "_id": "6697be8c05d374062f8cb895",
+        "name": "Distribution",
+        "drillDowns": null,
+        "layout": {
+          "barType": "percent"
+        },
+        "overlays": [],
+        "filters": {
+          "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+        }
+      },
+      {
+        "__typename": "Chartable",
+        "_id": "6697be8c05d374062f8cb85e",
+        "name": "Throughput",
+        "drillDowns": null,
+        "layout": {
+          "comparisonType": "percentageChange"
+        },
+        "overlays": [
+          {
+            "_id": "6697be8c05d374062f8cb85b",
+            "name": "Previous Throughput",
+            "layout": {
+              "comparisonType": "percentageChange"
+            },
+            "filters": {
+              "dql": "timestamp > 30d AND timestamp < 60d AND cycleType = \"leadTime\""
+            },
+            "__typename": "Chartable"
+          }
+        ],
+        "filters": {
+          "dql": "timestamp < 30d AND cycleType = \"leadTime\""
+        }
+      }
+    ]
+  }
+
+  

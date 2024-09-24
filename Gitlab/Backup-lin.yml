@@ -1,0 +1,25 @@
+variables:  
+  GIT_STRATEGY: "clone"
+  DEPLOYMENT_DIR: "/opt/tomcat/webapps"
+  BACKUP_DIR: "/tmp/tomcat-web-app-bkp"
+
+Tomcat-Webapp-backup-DEV:
+    stage: backup
+    tags:
+    - shell-r2
+    dependencies:
+        - "Maven_build"
+    before_script:
+        - if [ -d "$DEPLOYMENT_DIR" ]; then echo "Deployment directory exists"; else echo "Deployment directory does not exist"; fi
+    script:
+        - whoami
+        - if [ ! -d "$BACKUP_DIR" ]; then mkdir -p "$BACKUP_DIR"; echo "Backup directory created"; else echo "Backup directory exists"; fi
+        - mkdir -p /tmp/deployment_backup
+        - sudo cp -r "$DEPLOYMENT_DIR"/Project-4.war /tmp/deployment_backup/
+        - sudo tar --exclude="$venv_name" -czvf "$BACKUP_DIR/deployment_backup_$(date +%Y%m%d_%H%M%S).tar.gz" -C /tmp/deployment_backup/ .
+        - sudo rm -rf /tmp/deployment_backup
+        - sudo chmod 777 $BACKUP_DIR/*
+        - sudo find "$BACKUP_DIR" -type f -name "*.tar.gz" | sort | head -n -5 | sudo xargs rm -f  
+    when: always
+    # rules:
+    # - if: '$CI_COMMIT_TAG =~ /^DEV_.*/'

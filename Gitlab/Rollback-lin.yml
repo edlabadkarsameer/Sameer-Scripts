@@ -1,0 +1,32 @@
+variables:  
+  GIT_STRATEGY: "clone"
+  DEPLOYMENT_DIR: "/opt/tomcat/webapps"
+  BACKUP_DIR: "/tmp/tomcat-web-app-bkp"
+
+
+Tomcat-webapps-rollback-DEV:
+    stage: rollback
+    tags:
+        - shell-r2
+    dependencies:
+        - "Maven_build"
+    before_script:
+        - sudo /opt/tomcat/bin/shutdown.sh
+    script:
+        - echo "Removing current deployment files in $DEPLOYMENT_DIR..."
+        - sudo rm -rf $DEPLOYMENT_DIR/*
+        - echo "Restoring from the latest backup..."
+        - LATEST_BACKUP=$(ls -t $BACKUP_DIR/*.tar.gz | head -n 1)
+        - |
+          if [ -n "$LATEST_BACKUP" ]; then
+            echo "Extracting backup $LATEST_BACKUP to $DEPLOYMENT_DIR...";
+            sudo tar -xzvf "$LATEST_BACKUP" -C $DEPLOYMENT_DIR;
+          else
+            echo "No backup found in $BACKUP_DIR.";
+            exit 1;
+          fi  
+    after_script:
+        - sudo /opt/tomcat/bin/startup.sh
+    when: manual
+    # rules:
+    # - if: '$CI_COMMIT_TAG =~ /^DEV_.*/'

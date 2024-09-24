@@ -1,0 +1,4 @@
+jira_server = ''
+jira_username = ''
+jira_password = ''
+api_token = ''
