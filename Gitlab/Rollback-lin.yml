@@ -11,7 +11,7 @@ Tomcat-webapps-rollback-DEV:
     dependencies:
         - "Maven_build"
     before_script:
-        - sudo /opt/tomcat/bin/shutdown.sh
+        - sudo /opt/tomcat/bin/shutdown.sh     
     script:
         - echo "Removing current deployment files in $DEPLOYMENT_DIR..."
         - sudo rm -rf $DEPLOYMENT_DIR/*
